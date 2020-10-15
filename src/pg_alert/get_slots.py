@@ -1,8 +1,10 @@
+import logging
 from dateutil.parser import parse
 from collections import namedtuple
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 
+log = logging.getLogger(__name__)
 
 GYMS_BOOKING_URLS = {
     "Belmont_roped": "https://app.rockgympro.com/b/widget/?a=offering&offering_guid=3786a62dd58b459abfadf82b7d2276d7&widget_guid=b7c6e7d4c2bd41b1a44990b9a402886c&random=5f7eb42886fc1&iframeid=&mode=p",  # noqa
@@ -44,6 +46,7 @@ def get_all_available_slots():
 
 
 def setup_driver(url):
+    log.debug(f"Setting up driver for URL:\n{url}")
     options = Options()
     options.headless = True
     driver = webdriver.Firefox(options=options)
@@ -53,6 +56,7 @@ def setup_driver(url):
 
 
 def get_available_slots_for_current_month(driver):
+    log.debug("Getting available slots for current month. ")
     bookable_day_elements = get_bookable_date_elements(driver)
 
     available_slots = []
@@ -64,6 +68,7 @@ def get_available_slots_for_current_month(driver):
 
 def get_bookable_date_elements(driver):
     """ Returns a generator over bookable date elements. """
+    log.debug("Getting all bookable dates.")
     yielded_dates = []
     while True:
         available = driver.find_elements_by_class_name(CLASSES['available_date'])
@@ -80,11 +85,13 @@ def get_bookable_date_elements(driver):
 
 
 def get_available_slots_for_date(driver, day_element):
+    log.debug(f"Clicking on day {day_element.text}.")
     day_element.click()
     return get_available_schedule_slots(driver)
 
 
 def get_available_schedule_slots(driver):
+    log.debug("Getting all available schedule slots for date.")
     year = get_year(driver)
     available_slots = []
     schedule_element = driver.find_element_by_id(IDS['schedule'])
@@ -136,5 +143,6 @@ def parse_slot_availability_element(availability_element):
 
 
 def advance_month(driver):
+    log.debug("Advancing one month.")
     next_month_button = driver.find_element_by_class_name(CLASSES['next_month'])
     next_month_button.click()

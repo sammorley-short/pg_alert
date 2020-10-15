@@ -1,5 +1,7 @@
+import logging
 from pprint import pprint
 from pg_alert.get_slots import get_all_available_slots
+from pg_alert.check_availability import check_availability
 
 
 def run():
@@ -22,4 +24,7 @@ def run():
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG)
+    logging.getLogger('selenium').setLevel(logging.WARNING)
+    logging.getLogger('urllib3').setLevel(logging.WARNING)
     run()
