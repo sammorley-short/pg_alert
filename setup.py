@@ -11,5 +11,8 @@ setup(
     install_requires=[
         'selenium>=3.141.0,<4.0.0',
         'python-dateutil>=2.8.1,<3.0.0',
+        'google-api-python-client',
+        'google-auth-httplib2',
+        'google-auth-oauthlib',
     ],
 )

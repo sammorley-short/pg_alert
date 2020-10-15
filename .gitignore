@@ -2,3 +2,6 @@
 __pycache__
 geckodriver.log
 tags
+credentials.json
+token.pickle
+SHEET_ID
