@@ -11,7 +11,7 @@ def run():
     pprint(available_slots)
 
     example_data = {
-        'Mon': ['08:00-14:00', '16:00-24:00'],
+        'Mon': ['08:00-14:00', '16:00-23:59'],
         'Tue': [],
         'Wed': ['06:00-22:00'],
         'Thu': [],
@@ -20,7 +20,8 @@ def run():
         'Sun': ['16:00-23:00', '10:00-14:00'],
     }
 
-    check_availability(example_data, available_slots)
+    good_slots = check_availability(example_data, available_slots)
+    pprint(good_slots)
 
 
 if __name__ == '__main__':
