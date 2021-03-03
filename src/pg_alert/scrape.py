@@ -33,17 +33,17 @@ MAX_WAIT_SECONDS = 5
 MAX_SPACES = 15
 
 
-def get_all_available_slots():
+def get_all_bookable_slots():
     booking_url = GYMS_BOOKING_URLS['Belmont_roped']
     driver = setup_driver(booking_url)
 
-    # Get any available dates in this month and the next
-    available_slots = get_available_slots_for_current_month(driver)
+    # Get any bookable dates in this month and the next
+    bookable_slots = get_bookable_slots_for_current_month(driver)
     advance_month(driver)
-    available_slots += get_available_slots_for_current_month(driver)
+    bookable_slots += get_bookable_slots_for_current_month(driver)
 
     driver.quit()
-    return available_slots
+    return bookable_slots
 
 
 def setup_driver(url):
@@ -56,15 +56,15 @@ def setup_driver(url):
     return driver
 
 
-def get_available_slots_for_current_month(driver):
-    log.debug("Getting available slots for current month. ")
+def get_bookable_slots_for_current_month(driver):
+    log.debug("Getting bookable slots for current month. ")
     bookable_day_elements = get_bookable_date_elements(driver)
 
-    available_slots = []
+    bookable_slots = []
     for bookable_day_element in bookable_day_elements:
-        available_slots += get_available_slots_for_date(driver, bookable_day_element)
+        bookable_slots += get_bookable_slots_for_date(driver, bookable_day_element)
 
-    return available_slots
+    return bookable_slots
 
 
 def get_bookable_date_elements(driver):
@@ -85,24 +85,24 @@ def get_bookable_date_elements(driver):
         yield date_element
 
 
-def get_available_slots_for_date(driver, day_element):
+def get_bookable_slots_for_date(driver, day_element):
     log.debug(f"Clicking on day {day_element.text}.")
     day_element.click()
-    return get_available_schedule_slots(driver)
+    return get_bookable_schedule_slots(driver)
 
 
-def get_available_schedule_slots(driver):
-    log.debug("Getting all available schedule slots for date.")
+def get_bookable_schedule_slots(driver):
+    log.debug("Getting all bookable schedule slots for date.")
     year = get_year(driver)
-    available_slots = []
+    bookable_slots = []
     schedule_element = driver.find_element_by_id(IDS['schedule'])
     for row in schedule_element.find_elements_by_xpath(XPATHS['table_row']):
         slot_data_elements = row.find_elements_by_xpath(XPATHS["table_row_data"])
-        if is_available_slot(slot_data_elements):
+        if is_bookable_slot(slot_data_elements):
             slot = make_slot(slot_data_elements, year)
-            available_slots.append(slot)
+            bookable_slots.append(slot)
 
-    return available_slots
+    return bookable_slots
 
 
 def get_year(driver):
@@ -110,7 +110,7 @@ def get_year(driver):
     return year_element.text
 
 
-def is_available_slot(slot_data_elements):
+def is_bookable_slot(slot_data_elements):
     return slot_data_elements[-1].text == "Select"
 
 
