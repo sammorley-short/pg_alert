@@ -7,7 +7,8 @@ from selenium.webdriver.firefox.options import Options
 log = logging.getLogger(__name__)
 
 GYMS_BOOKING_URLS = {
-    "Belmont_roped": "https://app.rockgympro.com/b/widget/?a=offering&offering_guid=3786a62dd58b459abfadf82b7d2276d7&widget_guid=b7c6e7d4c2bd41b1a44990b9a402886c&random=5f7eb42886fc1&iframeid=&mode=p",  # noqa
+    # "Belmont_roped": "https://app.rockgympro.com/b/widget/?a=offering&offering_guid=3786a62dd58b459abfadf82b7d2276d7&widget_guid=b7c6e7d4c2bd41b1a44990b9a402886c&random=5f7eb42886fc1&iframeid=&mode=p",  # noqa
+    'Belmont_roped': 'https://app.rockgympro.com/b/widget/?a=offering&offering_guid=b4f9a803f9c54cdc995f3b93200568af&widget_guid=b7c6e7d4c2bd41b1a44990b9a402886c&random=603f0b4f48d5a&iframeid=&mode=p' # noqa
 }
 
 XPATHS = {

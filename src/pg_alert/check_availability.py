@@ -1,4 +1,4 @@
-from pprint import pprint
+# from pprint import pprint
 from datetime import time
 from collections import namedtuple
 from .constants import WEEKDAYS
@@ -7,7 +7,6 @@ from .constants import WEEKDAYS
 def check_availability(desired_windows, available_slots):
     weekday_slots = sort_slots_by_weekday(available_slots)
     weekday_windows = parse_desired_windows(desired_windows)
-    pprint(weekday_slots)
     good_slots = []
     for weekday in WEEKDAYS:
         windows = weekday_windows[weekday]
