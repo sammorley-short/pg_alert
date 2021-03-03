@@ -3,26 +3,40 @@ import os.path
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
+from .constants import WEEKDAYS
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 
 # The ID and range of a sample spreadsheet.
-SIGNUP_DATA_RANGE = 'Sheet1!A3:I'
+CELL_RANGE = 'A3:I'
 
 
-def read_sheet(sheet_id):
+def read_signup_sheet():
+    sheet_id = get_sheet_id()
+    return read_google_spreadsheet(sheet_id)
+
+
+def get_sheet_id():
+    with open('SHEET_ID', 'r') as file:
+        return file.read().splitlines()[0]
+
+
+def read_google_spreadsheet(sheet_id):
     creds = read_credentials()
-    signup_data = pull_signup_data(sheet_id, creds)
-    return signup_data
-
-
-def pull_signup_data(sheet_id, creds):
     service = build('sheets', 'v4', credentials=creds)
     sheet = service.spreadsheets()
-    result = sheet.values().get(spreadsheetId=sheet_id, range=SIGNUP_DATA_RANGE).execute()
-    values = result.get('values', [])
-    return values
+    spreadsheet_data = sheet.get(spreadsheetId=sheet_id).execute()
+    sheet_names = get_sheet_names(spreadsheet_data)
+    spreadsheet_data = {}
+    for sheet_name in sheet_names:
+        range = f"'{sheet_name}'!{CELL_RANGE}"
+        sheet_data = sheet.values().get(
+            spreadsheetId=sheet_id,
+            range=range
+        ).execute()
+        spreadsheet_data[sheet_name] = parse_sheet_data(sheet_data)
+    return spreadsheet_data
 
 
 def read_credentials():
@@ -45,3 +59,41 @@ def read_credentials():
             pickle.dump(creds, token)
 
     return creds
+
+
+def get_sheet_names(spreadsheet_data):
+    sheets_metadata = spreadsheet_data['sheets']
+    return [get_sheet_name(sheet_metadata) for sheet_metadata in sheets_metadata]
+
+
+def get_sheet_name(sheet_metadata):
+    return sheet_metadata['properties']['title']
+
+
+def parse_sheet_data(sheet_data):
+    data_rows = filter(is_valid_row, sheet_data['values'])
+    return [
+        parse_sheet_data_row(row)
+        for row in data_rows
+    ]
+
+
+def is_valid_row(row):
+    return len(row) >= 2 and row[0] != '' and row[1] != ''
+
+
+def parse_sheet_data_row(row):
+    name, email, *availabilities = row
+    week_availability = parse_availabilities(availabilities)
+    return {
+        'name': name,
+        'email': email,
+        'availabilities': week_availability,
+    }
+
+
+def parse_availabilities(availabilities):
+    return {
+        day: [] if availability == '' else availability.split(',')
+        for day, availability in zip(WEEKDAYS, availabilities)
+    }
