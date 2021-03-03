@@ -1,8 +1,7 @@
 from pprint import pprint
 from datetime import time
 from collections import namedtuple
-
-WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+from .constants import WEEKDAYS
 
 
 def check_availability(desired_windows, available_slots):
