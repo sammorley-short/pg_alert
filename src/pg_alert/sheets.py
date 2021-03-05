@@ -89,7 +89,7 @@ def parse_sheet_data_row(row):
     return {
         'name': name,
         'email': email,
-        'availabilities': week_availability,
+        'availability': week_availability,
     }
 
 

@@ -7,25 +7,9 @@ from selenium.webdriver.firefox.options import Options
 from .gyms import get_gym_url
 log = logging.getLogger(__name__)
 
-XPATHS = {
-    'table_row': ".//tr",
-    'table_row_data': ".//td",
-}
 
-CLASSES = {
-    'calendar': 'ui-datepicker-calendar',
-    'available_date': "datepicker-available-day",
-    'date': "ui-state-default",
-    'next_month': "ui-datepicker-next",
-    'year': 'ui-datepicker-year',
-}
-
-IDS = {
-    'schedule': "offering-page-select-events-table",
-}
-
+# Define constants
 MAX_WAIT_SECONDS = 5
-
 MAX_SPACES = 15
 
 
@@ -53,7 +37,7 @@ def setup_driver(url):
 
 
 def get_bookable_slots_for_current_month(driver):
-    log.debug("Getting bookable slots for current month. ")
+    log.debug("Getting bookable slots for current month.")
     bookable_day_elements = get_bookable_date_elements(driver)
 
     bookable_slots = []
@@ -61,6 +45,15 @@ def get_bookable_slots_for_current_month(driver):
         bookable_slots += get_bookable_slots_for_date(driver, bookable_day_element)
 
     return bookable_slots
+
+
+CLASSES = {
+    'calendar': 'ui-datepicker-calendar',
+    'available_date': "datepicker-available-day",
+    'date': "ui-state-default",
+    'next_month': "ui-datepicker-next",
+    'year': 'ui-datepicker-year',
+}
 
 
 def get_bookable_date_elements(driver):
@@ -85,6 +78,16 @@ def get_bookable_slots_for_date(driver, day_element):
     log.debug(f"Clicking on day {day_element.text}.")
     day_element.click()
     return get_bookable_schedule_slots(driver)
+
+
+IDS = {
+    'schedule': "offering-page-select-events-table",
+}
+
+XPATHS = {
+    'table_row': ".//tr",
+    'table_row_data': ".//td",
+}
 
 
 def get_bookable_schedule_slots(driver):
