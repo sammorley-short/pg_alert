@@ -1,5 +1,6 @@
 import pickle
 import os.path
+from itertools import zip_longest
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
@@ -95,5 +96,5 @@ def parse_sheet_data_row(row):
 def parse_availabilities(availabilities):
     return {
         day: [] if availability == '' else availability.split(',')
-        for day, availability in zip(WEEKDAYS, availabilities)
+        for day, availability in zip_longest(WEEKDAYS, availabilities, fillvalue='')
     }
